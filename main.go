@@ -12,6 +12,10 @@ func scan(folder string) {
 	addNewFoundRepositories(filePath, repositories)
 }
 
+func recursiveScanFolder(folder string) []string {
+	return scanGitFolders(make([]string, 0), folder)
+}
+
 func scanGitFolders(folders []string, folder string) []string {
 	folder = strings.TrimSuffix(folder, "/")
 	f, err := os.Open(folder)
