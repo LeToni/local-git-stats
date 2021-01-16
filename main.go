@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"os"
+	"os/user"
 	"strings"
 )
 
@@ -42,6 +43,17 @@ func scanGitFolders(folders []string, folder string) []string {
 	}
 
 	return folders
+}
+
+func getDotFilePath() string {
+	usr, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+
+	dotFile := usr.HomeDir + "/.gogitlocalstats"
+
+	return dotFile
 }
 
 func stats(email string) {
