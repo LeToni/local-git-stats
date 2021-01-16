@@ -61,7 +61,14 @@ func parseDotFile(filePath string) []string {
 	f, err := os.Open(filePath)
 	defer f.Close()
 	if err != nil {
-		panic(err)
+		if os.IsNotExist(err) {
+			_, err = os.Create(filePath)
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			panic(err)
+		}
 	}
 
 	var repos []string
