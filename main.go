@@ -9,7 +9,7 @@ import (
 
 func scan(folder string) {
 	repositories := recursiveScanFolder(folder)
-	filepath := getDotFilePath()
+	filePath := getDotFilePath()
 	addNewFoundRepositories(filePath, repositories)
 }
 
