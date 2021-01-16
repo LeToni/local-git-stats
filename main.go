@@ -2,11 +2,12 @@ package main
 
 import (
 	"flag"
-	"fmt"
 )
 
-func scan(path string) {
-	fmt.Println("Scanning folger...")
+func scan(folder string) {
+	repositories := recursiveScanFolder(folder)
+	filepath := getDotFilePath()
+	addNewFoundRepositories(filePath, repositories)
 }
 
 func stats(email string) {
