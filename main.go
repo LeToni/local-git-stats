@@ -56,6 +56,22 @@ func getDotFilePath() string {
 	return dotFile
 }
 
+func parseDotFile(filePath string) []string {
+	f, err := os.Open(filePath)
+	defer f.Close()
+	if err != nil {
+		panic(err)
+	}
+
+	var repos []string
+	for scanner := bufio.NewScanner(f); scanner.Scan(); {
+		repo := scanner.Text()
+		repos = append(repos, repo)
+	}
+
+	return repos
+}
+
 func stats(email string) {
 	print("Displaying stats...")
 }
