@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"io/ioutil"
 	"os"
 	"os/user"
 	"strings"
@@ -60,6 +61,7 @@ func getDotFilePath() string {
 func addNewFoundRepositories(filePath string, newRepos []string) {
 	existingRepos := parseDotFile(filePath)
 	repos := joinRepos(newRepos, existingRepos)
+	WriteToDotFile(repos, filePath)
 }
 
 func parseDotFile(filePath string) []string {
@@ -101,6 +103,14 @@ func reposContains(repos []string, repo string) bool {
 		}
 	}
 	return false
+}
+
+func WriteToDotFile(repos []string, filePath string) {
+	contentFile := strings.Join(repos, "\n")
+	err := ioutil.WriteFile(filePath, []byte(contentFile), 0644)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func stats(email string) {
