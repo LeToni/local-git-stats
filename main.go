@@ -22,11 +22,11 @@ func recursiveScanFolder(folder string) []string {
 func scanGitFolders(folders []string, folder string) []string {
 	folder = strings.TrimSuffix(folder, "/")
 	f, err := os.Open(folder)
-	defer f.Close()
 	if err != nil {
 		panic(err)
 	}
 	files, err := f.Readdir(-1)
+	defer f.Close()
 	if err != nil {
 		panic(err)
 	}
@@ -39,6 +39,7 @@ func scanGitFolders(folders []string, folder string) []string {
 			if file.Name() == ".git" {
 				path = strings.TrimSuffix(path, "/.git")
 				folders = append(folders, path)
+				continue
 			}
 			folders = scanGitFolders(folders, path)
 		}
