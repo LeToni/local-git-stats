@@ -57,6 +57,11 @@ func getDotFilePath() string {
 	return dotFile
 }
 
+func addNewFoundRepositories(filePath string, newRepos []string) {
+	existingRepos := parseDotFile(filePath)
+	repos := joinRepos(newRepos, existingRepos)
+}
+
 func parseDotFile(filePath string) []string {
 	f, err := os.Open(filePath)
 	defer f.Close()
@@ -78,6 +83,24 @@ func parseDotFile(filePath string) []string {
 	}
 
 	return repos
+}
+
+func joinRepos(newRepos []string, existingRepos []string) []string {
+	for _, new := range newRepos {
+		if !reposContains(existingRepos, new) {
+			existingRepos = append(existingRepos, new)
+		}
+	}
+	return existingRepos
+}
+
+func reposContains(repos []string, repo string) bool {
+	for _, r := range repos {
+		if r == repo {
+			return true
+		}
+	}
+	return false
 }
 
 func stats(email string) {
