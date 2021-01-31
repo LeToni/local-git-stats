@@ -2,10 +2,6 @@ package main
 
 import "flag"
 
-func stats(email string) {
-	print("Displaying stats...")
-}
-
 func main() {
 	var (
 		folder string
