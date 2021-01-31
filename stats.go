@@ -13,8 +13,8 @@ const (
 )
 
 func stats(email string) {
-	commits := processRepos(email)
-	printCommitStats(commits)
+	// commits := processRepos(email)
+	// printCommitStats(commits)
 }
 
 func processRepos(email string) *map[int]int {
