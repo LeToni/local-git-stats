@@ -15,6 +15,8 @@ const (
 func stats(email string) {
 	// commits := processRepos(email)
 	// printCommitStats(commits)
+	commits := processRepos(email)
+	printCommitStats(commits)
 }
 
 func processRepos(email string) *map[int]int {
@@ -116,3 +118,10 @@ func calcOffSet() (offset int) {
 
 	return offset
 }
+
+func printCommitStats(commits map[int]int) {
+	keys := sortMapIntoSlice(commits)
+	cols := buildCols(keys, commits)
+	printCells(cols)
+}
+
