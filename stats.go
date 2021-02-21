@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sort"
 	"time"
 
@@ -9,8 +10,9 @@ import (
 )
 
 const (
-	outOfRange          = 99999
-	daysInLastSixMonths = 183
+	outOfRange           = 99999
+	daysInLastSixMonths  = 183
+	weeksInLastSixMonths = 26
 )
 
 type column []int
@@ -120,15 +122,15 @@ func calcOffSet() (offset int) {
 	return offset
 }
 
-func printCommitStats(commits map[int]int) {
+func printCommitStats(commits *map[int]int) {
 	keys := sortMapIntoSlice(commits)
 	cols := buildCols(keys, commits)
 	printCells(cols)
 }
 
-func sortMapIntoSlice(m map[int]int) []int {
+func sortMapIntoSlice(m *map[int]int) []int {
 	var keys []int
-	for k := range m {
+	for k := range *m {
 		keys = append(keys, k)
 	}
 	sort.Ints(keys)
@@ -136,11 +138,11 @@ func sortMapIntoSlice(m map[int]int) []int {
 	return keys
 }
 
-func buildCols(keys []int, commits map[int]int) map[int]column {
+func buildCols(keys *[]int, commits *map[int]int) *map[int]column {
 	cols := make(map[int]column)
 	col := column{}
 
-	for _, k := range keys {
+	for _, k := range *keys {
 		week := int(k / 7)
 		dayInWeek := k % 7
 
@@ -148,11 +150,101 @@ func buildCols(keys []int, commits map[int]int) map[int]column {
 			col = column{}
 		}
 
-		col = append(col, commits[k])
+		col = append(col, (*commits)[k])
 
 		if dayInWeek == 6 {
 			cols[week] = col
 		}
 	}
-	return cols
+	return &cols
+}
+
+func printCells(cols *map[int]column) {
+	printMonths()
+
+	for j := 6; j >= 0; j-- {
+		for i := weeksInLastSixMonths + 1; i >= 0; i-- {
+			if i == weeksInLastSixMonths+1 {
+				printDayCol(j)
+			}
+			if col, ok := (*cols)[i]; ok {
+				if i == 0 && j == calcOffSet()-1 {
+					printCell(col[j], true)
+					continue
+				} else {
+					if len(col) > j {
+						printCell(col[j], false)
+						continue
+					}
+				}
+			}
+			printCell(0, false)
+		}
+		fmt.Printf("\n")
+	}
+}
+
+func printMonths() {
+	week := getBeginningOfDay(time.Now()).Add(-(daysInLastSixMonths * time.Hour * 24))
+	month := week.Month()
+	fmt.Printf("\t")
+	for {
+		if week.Month() != month {
+			fmt.Printf("%s ", week.Month().String()[:3])
+			month = week.Month()
+		} else {
+			fmt.Printf("\t")
+		}
+
+		week = week.Add(7 * time.Hour * 24)
+		if week.After(time.Now()) {
+			break
+		}
+	}
+	fmt.Print("\n")
+}
+
+func printDayCol(day int) {
+	out := "     "
+	switch day {
+	case 1:
+		out = " Mon "
+	case 3:
+		out = " Wed "
+	case 5:
+		out = " Fri "
+	}
+
+	fmt.Print(out)
+}
+
+func printCell(val int, today bool) {
+	escape := "\033[0;37;30m"
+	switch {
+	case val > 0 && val < 5:
+		escape = "\033[1;30;47m"
+	case val >= 5 && val < 10:
+		escape = "\033[1;30;43m"
+	case val >= 10:
+		escape = "\033[1;30;42m"
+	}
+
+	if today {
+		escape = "\033[1;37;45m"
+	}
+
+	if val == 0 {
+		fmt.Printf(escape + "  - " + "\033[0m")
+		return
+	}
+
+	str := "  %d "
+	switch {
+	case val >= 10:
+		str = " %d "
+	case val >= 100:
+		str = "%d "
+	}
+
+	fmt.Printf(escape+str+"\033[0m", val)
 }
