@@ -19,7 +19,7 @@ type column []int
 
 func stats(email string) {
 	commits := processRepos(email)
-	printCommitStats(*commits)
+	printCommitStats(commits)
 }
 
 func processRepos(email string) *map[int]int {
@@ -128,14 +128,14 @@ func printCommitStats(commits *map[int]int) {
 	printCells(cols)
 }
 
-func sortMapIntoSlice(m *map[int]int) []int {
+func sortMapIntoSlice(m *map[int]int) *[]int {
 	var keys []int
 	for k := range *m {
 		keys = append(keys, k)
 	}
 	sort.Ints(keys)
 
-	return keys
+	return &keys
 }
 
 func buildCols(keys *[]int, commits *map[int]int) *map[int]column {
