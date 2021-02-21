@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sort"
 	"time"
 
 	"github.com/go-git/go-git/v5"
@@ -125,3 +126,12 @@ func printCommitStats(commits map[int]int) {
 	printCells(cols)
 }
 
+func sortMapIntoSlice(m map[int]int) []int {
+	var keys []int
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+
+	return keys
+}
