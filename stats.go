@@ -13,9 +13,11 @@ const (
 	daysInLastSixMonths = 183
 )
 
+type column []int
+
 func stats(email string) {
 	commits := processRepos(email)
-	printCommitStats(commits)
+	printCommitStats(*commits)
 }
 
 func processRepos(email string) *map[int]int {
@@ -132,4 +134,25 @@ func sortMapIntoSlice(m map[int]int) []int {
 	sort.Ints(keys)
 
 	return keys
+}
+
+func buildCols(keys []int, commits map[int]int) map[int]column {
+	cols := make(map[int]column)
+	col := column{}
+
+	for _, k := range keys {
+		week := int(k / 7)
+		dayInWeek := k % 7
+
+		if dayInWeek == 0 {
+			col = column{}
+		}
+
+		col = append(col, commits[k])
+
+		if dayInWeek == 6 {
+			cols[week] = col
+		}
+	}
+	return cols
 }
