@@ -14,7 +14,6 @@ const (
 )
 
 func stats(email string) {
-	// printCommitStats(commits)
 	commits := processRepos(email)
 	printCommitStats(commits)
 }
